@@ -1,0 +1,94 @@
+{
+  "entities": {
+    "user": {
+      "title": "User",
+      "description": "User profile and settings",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "settings": {
+          "type": "object",
+          "properties": {
+            "theme": { "type": "string", "enum": ["light", "dark", "oled"] },
+            "accentColor": { "type": "string" }
+          }
+        }
+      },
+      "required": ["uid"]
+    },
+    "persona": {
+      "title": "Persona",
+      "description": "AI Persona definition",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Owner UID" },
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "avatarUrl": { "type": "string" },
+        "systemPrompt": { "type": "string" },
+        "traits": { "type": "array", "items": { "type": "string" } },
+        "axes": { "type": "object", "description": "Weighted personality axes" },
+        "narrativeTension": { "type": "number" },
+        "isFavorite": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "name", "role"]
+    },
+    "conversation": {
+      "title": "Conversation",
+      "description": "Chat history and metadata",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Owner UID" },
+        "mode": { "type": "string", "enum": ["single", "duo", "trio", "debate"] },
+        "participants": { "type": "array", "items": { "type": "string" } },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "senderId": { "type": "string" },
+              "senderName": { "type": "string" },
+              "content": { "type": "string" },
+              "timestamp": { "type": "string", "format": "date-time" }
+            }
+          }
+        },
+        "summary": { "type": "string" },
+        "lastInteraction": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "mode"]
+    },
+    "memory": {
+      "title": "Memory",
+      "description": "Extracted memory from conversations",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Owner UID" },
+        "summary": { "type": "string" },
+        "keyFacts": { "type": "array", "items": { "type": "string" } },
+        "lastUpdated": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": {
+      "schema": "user",
+      "description": "User profile"
+    },
+    "/personas/{personaId}": {
+      "schema": "persona",
+      "description": "AI Personas"
+    },
+    "/conversations/{conversationId}": {
+      "schema": "conversation",
+      "description": "Chat history"
+    },
+    "/memories/{uid}": {
+      "schema": "memory",
+      "description": "User memory"
+    }
+  }
+}

@@ -1,0 +1,75 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme {
+  --color-cyan: #06b6d4;
+  --color-purple: #a855f7;
+  --color-emerald: #10b981;
+  --color-rose: #f43f5e;
+  --color-amber: #f59e0b;
+  --font-sans: var(--font-manrope);
+  --font-mono: var(--font-dm-mono);
+}
+
+:root {
+  --accent: var(--color-cyan);
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --neon-glow: 0 0 10px var(--accent), 0 0 20px var(--accent);
+}
+
+.dark {
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+.oled {
+  --glass-bg: rgba(255, 255, 255, 0.02);
+  --glass-border: rgba(255, 255, 255, 0.04);
+  background-color: black;
+}
+
+body {
+  @apply transition-colors duration-500 overflow-hidden;
+  background: radial-gradient(circle at center, #111 0%, #000 100%);
+}
+
+.liquid-glass {
+  backdrop-filter: blur(24px);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  @apply shadow-2xl transition-all duration-300;
+}
+
+.liquid-glass:hover {
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1), 0 0 15px var(--accent);
+  transform: translateY(-2px);
+}
+
+.neon-border {
+  @apply border;
+  border-color: var(--accent);
+  box-shadow: 0 0 5px var(--accent);
+}
+
+.neon-text {
+  text-shadow: 0 0 5px var(--accent);
+}
+
+.accent-cyan { --accent: var(--color-cyan); }
+.accent-purple { --accent: var(--color-purple); }
+.accent-emerald { --accent: var(--color-emerald); }
+.accent-rose { --accent: var(--color-rose); }
+.accent-amber { --accent: var(--color-amber); }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 10px;
+}
