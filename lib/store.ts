@@ -1,121 +1,158 @@
 import { create } from 'zustand';
-import { User } from './firebase';
+import { persist } from 'zustand/middleware';
+import { Theme, Accent, GeminiModel, PipelinePhase, AdvancedMatrix, Persona, ChatMessage, DebateRound, JudgeVerdict } from './types';
 
-export type Theme = 'light' | 'dark' | 'oled' | 'aurora' | 'cyberpunk';
-export type AccentColor = 'cyan' | 'purple' | 'emerald' | 'rose' | 'amber' | 'teal' | 'blue';
-export type Space = 'chat' | 'hub' | 'debate' | 'settings';
-export type ChatMode = 'single' | 'duo' | 'trio' | 'debate';
-
-export const RADIO_STATIONS = [
-  { name: 'Radio France', genre: 'Généraliste', url: 'https://icecast.radiofrance.fr/franceinter-midfi.mp3' },
-  { name: 'FIP', genre: 'Éclectique', url: 'https://icecast.radiofrance.fr/fip-midfi.mp3' },
-  { name: 'France Inter', genre: 'Généraliste', url: 'https://icecast.radiofrance.fr/franceinter-midfi.mp3' },
-  { name: 'France Culture', genre: 'Culture', url: 'https://icecast.radiofrance.fr/franceculture-midfi.mp3' },
-  { name: 'Klassik Radio', genre: 'Classique', url: 'http://stream.klassikradio.de/live/mp3-128/stream.mp3' },
-  { name: 'BBC 6 Music', genre: 'Alternative', url: 'http://stream.live.vc.bbcmedia.co.uk/bbc_6music' },
-  { name: 'NTS', genre: 'Underground', url: 'https://stream-mixtape-geo.ntslive.net/mixtape' },
-  { name: 'Rinse FM', genre: 'Electronic', url: 'http://stream.rinse.fm:8000/stream' },
-  { name: 'Jazz Radio', genre: 'Jazz', url: 'http://jazzradio.ice.infomaniak.ch/jazzradio-high.mp3' },
-];
-
-export interface Persona {
-  id: string;
-  uid: string;
-  name: string;
-  role: string;
-  avatarUrl: string;
-  systemPrompt: string;
-  traits: string[];
-  axes: Record<string, number>;
-  narrativeTension: number;
-  isFavorite: boolean;
-  createdAt: string;
-}
-
-export interface Message {
-  senderId: string;
-  senderName: string;
-  content: string;
-  timestamp: string;
-}
-
-export interface Conversation {
-  id: string;
-  uid: string;
-  mode: ChatMode;
-  participants: string[];
-  messages: Message[];
-  summary: string;
-  lastInteraction: string;
-}
-
-interface PrismaState {
-  user: User | null;
+interface UIState {
   theme: Theme;
-  accentColor: AccentColor;
-  activeSpace: Space;
-  isHeaderOpen: boolean;
-  isFooterOpen: boolean;
-  isDockOpen: boolean;
-  isRadioDrawerOpen: boolean;
-  
-  // Chat state
-  chatMode: ChatMode;
-  selectedPersonas: Persona[];
-  activeConversation: Conversation | null;
-  
-  // Radio state
-  radioStation: typeof RADIO_STATIONS[0];
-  isRadioPlaying: boolean;
-  isRadioMuted: boolean;
-  
-  // Actions
-  setUser: (user: User | null) => void;
+  accent: Accent;
+  geminiModel: GeminiModel;
+  headerVisible: boolean;
+  dockVisible: boolean;
   setTheme: (theme: Theme) => void;
-  setAccentColor: (color: AccentColor) => void;
-  setActiveSpace: (space: Space) => void;
-  toggleHeader: () => void;
-  toggleFooter: () => void;
-  toggleDock: () => void;
-  toggleRadioDrawer: () => void;
-  setChatMode: (mode: ChatMode) => void;
-  setSelectedPersonas: (personas: Persona[]) => void;
-  setActiveConversation: (conv: Conversation | null) => void;
-  setRadioStation: (station: typeof RADIO_STATIONS[0]) => void;
-  toggleRadioPlay: () => void;
-  toggleRadioMute: () => void;
+  setAccent: (accent: Accent) => void;
+  setGeminiModel: (model: GeminiModel) => void;
+  toggleChrome: () => void;
 }
 
-export const usePrismaStore = create<PrismaState>((set) => ({
-  user: null,
-  theme: 'dark',
-  accentColor: 'cyan',
-  activeSpace: 'hub',
-  isHeaderOpen: true,
-  isFooterOpen: true,
-  isDockOpen: true,
-  isRadioDrawerOpen: false,
-  
-  chatMode: 'single',
-  selectedPersonas: [],
-  activeConversation: null,
+export const useUIStore = create<UIState>()(
+  persist(
+    (set) => ({
+      theme: 'dark',
+      accent: 'teal',
+      geminiModel: 'gemini-2.0-flash',
+      headerVisible: true,
+      dockVisible: true,
+      setTheme: (theme) => set({ theme }),
+      setAccent: (accent) => set({ accent }),
+      setGeminiModel: (geminiModel) => set({ geminiModel }),
+      toggleChrome: () => set((state) => ({ headerVisible: !state.headerVisible, dockVisible: !state.dockVisible })),
+    }),
+    {
+      name: 'prisma-ui',
+    }
+  )
+);
 
-  radioStation: RADIO_STATIONS[0],
-  isRadioPlaying: false,
-  isRadioMuted: false,
-  
-  setUser: (user) => set({ user }),
-  setTheme: (theme) => set({ theme }),
-  setAccentColor: (accentColor) => set({ accentColor }),
-  setActiveSpace: (activeSpace) => set({ activeSpace }),
-  toggleHeader: () => set((state) => ({ isHeaderOpen: !state.isHeaderOpen })),
-  toggleFooter: () => set((state) => ({ isFooterOpen: !state.isFooterOpen })),
-  toggleDock: () => set((state) => ({ isDockOpen: !state.isDockOpen })),
-  toggleRadioDrawer: () => set((state) => ({ isRadioDrawerOpen: !state.isRadioDrawerOpen })),
-  setChatMode: (chatMode) => set({ chatMode }),
-  setSelectedPersonas: (selectedPersonas) => set({ selectedPersonas }),
-  setActiveConversation: (activeConversation) => set({ activeConversation }),
-  setRadioStation: (radioStation) => set({ radioStation, isRadioPlaying: true }),
-  toggleRadioPlay: () => set((state) => ({ isRadioPlaying: !state.isRadioPlaying })),
-  toggleRadioMute: () => set((state) => ({ isRadioMuted: !state.isRadioMuted })),
+interface RadioState {
+  activeStationId: string;
+  isPlaying: boolean;
+  volume: number;
+  setStation: (id: string) => void;
+  togglePlay: () => void;
+  setVolume: (volume: number) => void;
+}
+
+export const useRadioStore = create<RadioState>()(
+  persist(
+    (set) => ({
+      activeStationId: 'fip',
+      isPlaying: false,
+      volume: 0.5,
+      setStation: (activeStationId) => set({ activeStationId, isPlaying: true }),
+      togglePlay: () => set((state) => ({ isPlaying: !state.isPlaying })),
+      setVolume: (volume) => set({ volume }),
+    }),
+    {
+      name: 'prisma-radio',
+    }
+  )
+);
+
+interface PipelineState {
+  phase: PipelinePhase;
+  intention: string;
+  matrices: AdvancedMatrix[];
+  selMatrix: number | null;
+  personas: Persona[];
+  selPersona: number | null;
+  messages: ChatMessage[];
+  isStreaming: boolean;
+  setIntention: (intention: string) => void;
+  setPhase: (phase: PipelinePhase) => void;
+  setMatrices: (matrices: AdvancedMatrix[]) => void;
+  selectMatrix: (index: number | null) => void;
+  setPersonas: (personas: Persona[]) => void;
+  selectPersona: (index: number | null) => void;
+  addMessage: (message: ChatMessage) => void;
+  appendChunk: (chunk: string) => void;
+  finalizeStream: () => void;
+  reset: () => void;
+}
+
+export const usePipelineStore = create<PipelineState>((set) => ({
+  phase: 'idle',
+  intention: '',
+  matrices: [],
+  selMatrix: null,
+  personas: [],
+  selPersona: null,
+  messages: [],
+  isStreaming: false,
+  setIntention: (intention) => set({ intention }),
+  setPhase: (phase) => set({ phase }),
+  setMatrices: (matrices) => set({ matrices }),
+  selectMatrix: (selMatrix) => set({ selMatrix }),
+  setPersonas: (personas) => set({ personas }),
+  selectPersona: (selPersona) => set({ selPersona }),
+  addMessage: (message) => set((state) => ({ messages: [...state.messages, message] })),
+  appendChunk: (chunk) => set((state) => {
+    const newMessages = [...state.messages];
+    const lastMessage = newMessages[newMessages.length - 1];
+    if (lastMessage && lastMessage.role === 'model' && lastMessage.streaming) {
+      lastMessage.content += chunk;
+    }
+    return { messages: newMessages };
+  }),
+  finalizeStream: () => set((state) => {
+    const newMessages = [...state.messages];
+    const lastMessage = newMessages[newMessages.length - 1];
+    if (lastMessage && lastMessage.role === 'model') {
+      lastMessage.streaming = false;
+    }
+    return { messages: newMessages, isStreaming: false };
+  }),
+  reset: () => set({
+    phase: 'idle',
+    intention: '',
+    matrices: [],
+    selMatrix: null,
+    personas: [],
+    selPersona: null,
+    messages: [],
+    isStreaming: false,
+  }),
+}));
+
+interface DebateState {
+  state: "idle" | "setup" | "vs_screen" | "round_a" | "round_b" | "judging" | "verdict";
+  subject: string;
+  personaA: Persona | null;
+  personaB: Persona | null;
+  rounds: DebateRound[];
+  verdict: JudgeVerdict | null;
+  setSubject: (subject: string) => void;
+  setPersonas: (personaA: Persona | null, personaB: Persona | null) => void;
+  startDebate: () => void;
+  addRound: (round: DebateRound) => void;
+  nextTurn: (state: "round_a" | "round_b" | "judging" | "verdict") => void;
+  requestJudge: () => void;
+  setVerdict: (verdict: JudgeVerdict) => void;
+  reset: () => void;
+}
+
+export const useDebateStore = create<DebateState>((set) => ({
+  state: 'idle',
+  subject: '',
+  personaA: null,
+  personaB: null,
+  rounds: [],
+  verdict: null,
+  setSubject: (subject) => set({ subject }),
+  setPersonas: (personaA, personaB) => set({ personaA, personaB }),
+  startDebate: () => set({ state: 'vs_screen', rounds: [], verdict: null }),
+  addRound: (round) => set((state) => ({ rounds: [...state.rounds, round] })),
+  nextTurn: (nextState) => set({ state: nextState }),
+  requestJudge: () => set({ state: 'judging' }),
+  setVerdict: (verdict) => set({ verdict, state: 'verdict' }),
+  reset: () => set({ state: 'idle', subject: '', personaA: null, personaB: null, rounds: [], verdict: null }),
 }));

@@ -1,27 +1,30 @@
-import type {Metadata} from 'next';
-import { Manrope, DM_Mono } from 'next/font/google';
-import './globals.css'; // Global styles
+"use client";
 
-const manrope = Manrope({
-  subsets: ['latin'],
-  variable: '--font-manrope',
-});
+import { Manrope, DM_Mono } from "next/font/google";
+import "./globals.css";
+import { AppShell } from "@/components/layout/AppShell";
+import { Toaster } from "sonner";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
 
-const dmMono = DM_Mono({
-  weight: ['400', '500'],
-  subsets: ['latin'],
-  variable: '--font-dm-mono',
-});
+const manrope = Manrope({ subsets: ["latin"], variable: "--font-sans" });
+const dmMono = DM_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-mono" });
 
-export const metadata: Metadata = {
-  title: 'Prisma OS',
-  description: 'Neural Interface v1.0',
-};
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  const [queryClient] = useState(() => new QueryClient());
 
-export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="en" className={`${manrope.variable} ${dmMono.variable}`}>
-      <body className="font-sans antialiased" suppressHydrationWarning>{children}</body>
+      <body className="font-sans antialiased">
+        <QueryClientProvider client={queryClient}>
+          <AppShell>{children}</AppShell>
+          <Toaster theme="dark" position="top-center" />
+        </QueryClientProvider>
+      </body>
     </html>
   );
 }

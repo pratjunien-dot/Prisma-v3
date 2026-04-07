@@ -2,74 +2,112 @@
 @import "tw-animate-css";
 
 @theme {
-  --color-cyan: #06b6d4;
-  --color-purple: #a855f7;
-  --color-emerald: #10b981;
-  --color-rose: #f43f5e;
-  --color-amber: #f59e0b;
-  --font-sans: var(--font-manrope);
-  --font-mono: var(--font-dm-mono);
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-border-1: var(--border-1);
+  --color-border-2: var(--border-2);
+  --color-text-1: var(--text-1);
+  --color-text-2: var(--text-2);
+  --color-text-3: var(--text-3);
+  --color-text-4: var(--text-4);
+  --color-accent: var(--accent);
+  --color-accent-rgb: var(--accent-rgb);
 }
 
-:root {
-  --accent: var(--color-cyan);
-  --glass-bg: rgba(255, 255, 255, 0.04);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --neon-glow: 0 0 10px var(--accent), 0 0 20px var(--accent);
+@layer base {
+  :root {
+    /* Default Theme: Dark */
+    --bg: #050508;
+    --bg-2: #0a0a0f;
+    --surface-1: rgba(255, 255, 255, 0.03);
+    --surface-2: rgba(255, 255, 255, 0.05);
+    --surface-3: rgba(255, 255, 255, 0.08);
+    --border-1: rgba(255, 255, 255, 0.1);
+    --border-2: rgba(255, 255, 255, 0.15);
+    --text-1: #ffffff;
+    --text-2: rgba(255, 255, 255, 0.7);
+    --text-3: rgba(255, 255, 255, 0.5);
+    --text-4: rgba(255, 255, 255, 0.3);
+    
+    /* Default Accent: Teal */
+    --accent: #00d4aa;
+    --accent-rgb: 0, 212, 170;
+
+    --glass-blur: blur(24px);
+  }
+
+  /* Themes */
+  [data-theme="oled"] {
+    --bg: #000000;
+    --bg-2: #050505;
+  }
+  [data-theme="light"] {
+    --bg: #f4f4f8;
+    --bg-2: #ffffff;
+    --surface-1: rgba(0, 0, 0, 0.03);
+    --surface-2: rgba(0, 0, 0, 0.05);
+    --surface-3: rgba(0, 0, 0, 0.08);
+    --border-1: rgba(0, 0, 0, 0.1);
+    --border-2: rgba(0, 0, 0, 0.15);
+    --text-1: #000000;
+    --text-2: rgba(0, 0, 0, 0.7);
+    --text-3: rgba(0, 0, 0, 0.5);
+    --text-4: rgba(0, 0, 0, 0.3);
+  }
+  [data-theme="aurora"] {
+    --bg: #040812;
+    --bg-2: #081020;
+  }
+  [data-theme="cyberpunk"] {
+    --bg: #060610;
+    --bg-2: #0a0a18;
+  }
+
+  /* Accents */
+  [data-accent="purple"] {
+    --accent: #7c5cfc;
+    --accent-rgb: 124, 92, 252;
+  }
+  [data-accent="blue"] {
+    --accent: #3b82f6;
+    --accent-rgb: 59, 130, 246;
+  }
+  [data-accent="rose"] {
+    --accent: #f43f5e;
+    --accent-rgb: 244, 63, 94;
+  }
+  [data-accent="amber"] {
+    --accent: #f59e0b;
+    --accent-rgb: 245, 158, 11;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text-1);
+    height: 100dvh;
+    overflow: hidden;
+    overscroll-behavior: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  input, textarea {
+    -webkit-text-fill-color: var(--text-1);
+    color-scheme: inherit;
+  }
 }
 
-.dark {
-  --glass-bg: rgba(255, 255, 255, 0.04);
-  --glass-border: rgba(255, 255, 255, 0.08);
-}
-
-.oled {
-  --glass-bg: rgba(255, 255, 255, 0.02);
-  --glass-border: rgba(255, 255, 255, 0.04);
-  background-color: black;
-}
-
-body {
-  @apply transition-colors duration-500 overflow-hidden;
-  background: radial-gradient(circle at center, #111 0%, #000 100%);
-}
-
-.liquid-glass {
-  backdrop-filter: blur(24px);
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  @apply shadow-2xl transition-all duration-300;
-}
-
-.liquid-glass:hover {
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1), 0 0 15px var(--accent);
-  transform: translateY(-2px);
-}
-
-.neon-border {
-  @apply border;
-  border-color: var(--accent);
-  box-shadow: 0 0 5px var(--accent);
-}
-
-.neon-text {
-  text-shadow: 0 0 5px var(--accent);
-}
-
-.accent-cyan { --accent: var(--color-cyan); }
-.accent-purple { --accent: var(--color-purple); }
-.accent-emerald { --accent: var(--color-emerald); }
-.accent-rose { --accent: var(--color-rose); }
-.accent-amber { --accent: var(--color-amber); }
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 4px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--accent);
-  border-radius: 10px;
+@layer utilities {
+  .glass-panel {
+    background: var(--surface-1);
+    border: 1px solid var(--border-1);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+  }
+  
+  .neon-glow {
+    box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.3);
+  }
 }

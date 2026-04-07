@@ -1,20 +1,24 @@
-import { NextResponse } from 'next/server';
-import Parser from 'rss-parser';
+import { NextResponse } from "next";
+import Parser from "rss-parser";
+
+export const revalidate = 300; // 5 minutes cache
 
 const parser = new Parser();
 
 export async function GET() {
   try {
-    const feed = await parser.parseURL('https://news.google.com/rss?hl=fr&gl=FR&ceid=FR:fr');
-    const items = feed.items.slice(0, 15).map(item => ({
+    const feed = await parser.parseURL("https://news.google.com/rss?hl=fr&gl=FR&ceid=FR:fr");
+    
+    const items = feed.items.slice(0, 6).map((item) => ({
       title: item.title,
+      source: item.source,
       link: item.link,
       date: item.pubDate,
-      source: item.source
+      snippet: item.contentSnippet,
     }));
+
     return NextResponse.json(items);
   } catch (error) {
-    console.error('Error fetching RSS:', error);
-    return NextResponse.json({ error: 'Failed to fetch news' }, { status: 500 });
+    return NextResponse.json({ error: "Failed to fetch news" }, { status: 500 });
   }
 }
