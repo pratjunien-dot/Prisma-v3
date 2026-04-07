@@ -9,18 +9,7 @@ import { Radio } from "lucide-react";
 export function Header() {
   const { headerVisible } = useUIStore();
   const { isPlaying, activeStationId, togglePlay } = useRadioStore();
-  const [time, setTime] = useState("");
   const [radioOpen, setRadioOpen] = useState(false);
-
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setTime(now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     const onRadioOpen = () => setRadioOpen((prev) => !prev);
@@ -38,12 +27,8 @@ export function Header() {
           transition={{ type: "spring", damping: 22, stiffness: 280 }}
           className="fixed top-0 left-0 right-0 z-50 px-4 pt-4"
         >
-          <div className="mx-auto max-w-lg">
-            <div className="glass-panel flex h-14 items-center justify-between rounded-2xl px-4">
-              <div className="font-mono text-lg font-bold text-[var(--accent)]">
-                PrismaOS
-              </div>
-              
+          <div className="mx-auto max-w-[200px]">
+            <div className="glass-panel flex h-14 items-center justify-center rounded-2xl px-4">
               <button 
                 onClick={() => setRadioOpen(!radioOpen)}
                 className="flex items-center gap-2 rounded-full bg-white/5 px-3 py-1.5 transition-colors hover:bg-white/10"
@@ -60,10 +45,6 @@ export function Header() {
                   </div>
                 )}
               </button>
-
-              <div className="font-mono text-sm text-gray-400">
-                {time}
-              </div>
             </div>
 
             <AnimatePresence>

@@ -110,4 +110,15 @@
   .neon-glow {
     box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.3);
   }
+
+  .layout-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr 280px; /* Gauche | Centre | Droite */
+    gap: 1.5rem;
+    height: 100dvh;
+    overflow: hidden;
+  }
+  @media (max-width: 1024px) {
+    .layout-grid { grid-template-columns: 1fr; } /* Mobile fallback */
+  }
 }
