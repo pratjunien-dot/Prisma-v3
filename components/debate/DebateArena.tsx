@@ -93,7 +93,7 @@ Réponds à ton adversaire ou avance un nouvel argument. Sois concis et percutan
       setCurrentStream("");
       
       // Auto-switch turns if less than 4 rounds
-      if (rounds.length < 3) {
+      if (3 > rounds.length) {
         setTimeout(() => nextTurn(isA ? "round_b" : "round_a"), 2000);
       }
 
@@ -106,7 +106,7 @@ Réponds à ton adversaire ou avance un nouvel argument. Sois concis et percutan
   if (!personaA || !personaB) return null;
 
   return (
-    <div className="flex h-full flex-col">
+    <motion.div className="flex h-full flex-col">
       <div className="glass-panel sticky top-0 z-10 p-4 text-center shadow-md">
         <h3 className="font-mono text-[10px] uppercase tracking-wider text-[var(--accent)]">Sujet</h3>
         <p className="text-sm font-medium">{subject}</p>
